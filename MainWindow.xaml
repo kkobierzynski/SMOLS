@@ -1,0 +1,28 @@
+﻿<Window x:Class="SMOLS2000.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SMOLS2000"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="800">
+    <Grid>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Open"/>
+                    <MenuItem Header="_Close"/>
+                    <MenuItem Header="_Save"/>
+                    <MenuItem Header="_Exit"/>
+                </MenuItem>
+            </Menu>
+            <StackPanel/>
+        </DockPanel>
+
+        <Grid x:Name="openFileGrid" Height="451" VerticalAlignment="Top" Margin="50,70,50,0" Background="#FF6A6A6A">
+            <Button x:Name="openFileButton" Content="Open a file..." HorizontalAlignment="Center" Margin="160,73,156,0" VerticalAlignment="Top" Width="376" Height="77" FontSize="36" Click="openFileButton_Click"/>
+            <TextBlock x:Name="openFileText" HorizontalAlignment="Center" Margin="10,250,10,0" TextWrapping="Wrap" Text="... or drop it here" VerticalAlignment="Top" Width="672" Height="58" FontSize="36" Foreground="#FFD1D1D1" TextAlignment="Center"/>
+
+        </Grid>
+    </Grid>
+</Window>
