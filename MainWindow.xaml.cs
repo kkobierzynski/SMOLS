@@ -32,7 +32,6 @@ namespace SMOLS2000
             audioFile = new OpenFile();
             int aaaaa = audioFile.testowanko();
             System.Console.WriteLine(aaaaa);
-            System.Console.WriteLine("test");
             
         }
     }
