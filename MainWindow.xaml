@@ -41,7 +41,7 @@
         <Slider HorizontalAlignment="Left" Margin="300,319,0,0" VerticalAlignment="Top" Width="350"/>
         <Button Content="Button" HorizontalAlignment="Left" Margin="702,249,0,0" VerticalAlignment="Top" Width="30" Height="30"/>
         <Button Content="Button" HorizontalAlignment="Left" Margin="702,315,0,0" VerticalAlignment="Top" Width="30" Height="30"/>
-        <Button Content="START" HorizontalAlignment="Left" Margin="12,406,0,0" VerticalAlignment="Top" Width="181" Height="69" FontSize="22"/>
+        <Button Content="START" HorizontalAlignment="Left" Margin="12,406,0,0" VerticalAlignment="Top" Width="181" Height="69" FontSize="22" Click="Button_Click"/>
         <StatusBar Margin="10,526,10,10"/>
 
     </Grid>

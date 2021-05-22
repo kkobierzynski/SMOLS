@@ -21,6 +21,7 @@ namespace SMOLS2000
     public partial class MainWindow : Window
     {
         OpenFile audiofile;
+        CutSilence cut;
 
         public MainWindow()
         {
@@ -33,6 +34,11 @@ namespace SMOLS2000
             int zmienna = audiofile.testowanko();
             Console.WriteLine(zmienna);
             
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            cut = new CutSilence(); 
         }
     }
 }
