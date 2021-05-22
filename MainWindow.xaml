@@ -15,14 +15,34 @@
                     <MenuItem Header="_Save"/>
                     <MenuItem Header="_Exit"/>
                 </MenuItem>
+                <MenuItem Header="Help"/>
             </Menu>
-            <StackPanel/>
+            <StackPanel>
+            </StackPanel>
         </DockPanel>
 
-        <Grid x:Name="openFileGrid" Height="451" VerticalAlignment="Top" Margin="50,70,50,0" Background="#FF6A6A6A">
+        <Grid x:Name="openFileGrid" Height="451" VerticalAlignment="Top" Margin="50,70,50,0" Background="#FF6A6A6A" Panel.ZIndex="2" Visibility="Collapsed">
             <Button x:Name="openFileButton" Content="Open a file..." HorizontalAlignment="Center" Margin="160,73,156,0" VerticalAlignment="Top" Width="376" Height="77" FontSize="36" Click="openFileButton_Click"/>
             <TextBlock x:Name="openFileText" HorizontalAlignment="Center" Margin="10,250,10,0" TextWrapping="Wrap" Text="... or drop it here" VerticalAlignment="Top" Width="672" Height="58" FontSize="36" Foreground="#FFD1D1D1" TextAlignment="Center"/>
 
+
         </Grid>
+        <Label Content="Source:" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label Content="Waveform:" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label Content="Attack / Release time:" HorizontalAlignment="Left" Margin="12,245,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label Content="Threshold:" HorizontalAlignment="Left" Margin="12,311,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label Content="Duration before:" HorizontalAlignment="Left" Margin="300,406,0,0" VerticalAlignment="Top" Width="146" FontSize="18"/>
+        <Label Content="Duration after:" HorizontalAlignment="Left" Margin="300,441,0,0" VerticalAlignment="Top" Width="146" FontSize="18"/>
+        <Label Content="Source" HorizontalAlignment="Left" Margin="120,34,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Source"/>
+        <Label Content="Time_before" HorizontalAlignment="Left" Margin="510,441,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Time_before"/>
+        <Label Content="Time_after" HorizontalAlignment="Left" Margin="510,406,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Time_after"/>
+        <Border BorderBrush="Black" BorderThickness="1" Height="100" Margin="10,121,10,0" VerticalAlignment="Top" Background="#FFB3D1AF"/>
+        <Slider HorizontalAlignment="Left" Margin="300,254,0,0" VerticalAlignment="Top" Width="350"/>
+        <Slider HorizontalAlignment="Left" Margin="300,319,0,0" VerticalAlignment="Top" Width="350"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="702,249,0,0" VerticalAlignment="Top" Width="30" Height="30"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="702,315,0,0" VerticalAlignment="Top" Width="30" Height="30"/>
+        <Button Content="START" HorizontalAlignment="Left" Margin="12,406,0,0" VerticalAlignment="Top" Width="181" Height="69" FontSize="22"/>
+        <StatusBar Margin="10,526,10,10"/>
+
     </Grid>
 </Window>

@@ -20,7 +20,7 @@ namespace SMOLS2000
     /// </summary>
     public partial class MainWindow : Window
     {
-        OpenFile audioFile;
+        OpenFile audiofile;
 
         public MainWindow()
         {
@@ -29,9 +29,9 @@ namespace SMOLS2000
 
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            audioFile = new OpenFile();
-            int aaaaa = audioFile.testowanko();
-            System.Console.WriteLine(aaaaa);
+            audiofile = new OpenFile();
+            int zmienna = audiofile.testowanko();
+            Console.WriteLine(zmienna);
             
         }
     }
