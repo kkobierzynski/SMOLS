@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FFMpegCore;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,17 +11,52 @@ namespace SMOLS2000
 {
     class OpenFile
     {
-        int test = -1;
-        public OpenFile()
-        {
-            MessageBox.Show("Udało Ci się kliknąć przycisk. 1 punkt dla KSEMWETIPG.", "SUKCES", MessageBoxButton.OK, MessageBoxImage.Information);
 
+        private string filePath = "";
+        private string fileName = "";
+        private double totalTimeMiliseconds = 0;
+
+
+
+        public OpenFile(MainWindow mainWindow)
+        {
+           
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Filter = "Audio files (*.wav, *.flac, *.mp3, *.m4a, *.ogg)|*.wav; *.flac; *.mp3; *.m4a; *.ogg|All files (*.*)|*.*";
+
+
+            if (openFile.ShowDialog() == true)
+            {
+                filePath = openFile.FileName;
+                if(filePath != "")
+                {
+                    fileName = filePath.Substring(filePath.LastIndexOf('\\') + 1);
+                    mainWindow.openFileGrid.Visibility = Visibility.Hidden;
+                    mainWindow.appMainCanvas.Visibility = Visibility.Visible;
+                }
+                
+            }
+
+            //ensure try/catch structure is here (like a big IF)
+            var mediaInfo = FFProbe.Analyse(filePath);
+
+            totalTimeMiliseconds = mediaInfo.Duration.TotalMilliseconds;
+
+
+
+
+        }
+
+        public string getFileName()
+        {
+            return fileName;
         }
 
         public int testowanko()
         {
-            return test;
+            return 0;
         }
+
 
     }
 }
