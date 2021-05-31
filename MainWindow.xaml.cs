@@ -38,7 +38,17 @@ namespace SMOLS2000
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            cut = new CutSilence(); 
+            cut = new CutSilence(this);
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void Slider_ValueChanged_1(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
         }
     }
 }
