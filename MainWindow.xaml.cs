@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace SMOLS2000
 {
     /// <summary>
@@ -22,10 +23,15 @@ namespace SMOLS2000
     {
         OpenFile audiofile;
         CutSilence cut;
+        DrawWaveform drawnWaveform;
+
 
         public MainWindow()
         {
             InitializeComponent();
+
+            drawnWaveform = new DrawWaveform(this);
+
         }
 
         private void openFileButton_Click(object sender, RoutedEventArgs e)
@@ -33,7 +39,7 @@ namespace SMOLS2000
             audiofile = new OpenFile(this);
             int zmienna = audiofile.testowanko();
             Console.WriteLine(zmienna);
-            
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
