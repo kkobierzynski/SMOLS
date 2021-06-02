@@ -37,8 +37,6 @@ namespace SMOLS2000
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
             audiofile = new OpenFile(this);
-            int zmienna = audiofile.testowanko();
-            Console.WriteLine(zmienna);
 
         }
 
