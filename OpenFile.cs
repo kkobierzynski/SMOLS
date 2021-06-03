@@ -23,14 +23,9 @@ namespace SMOLS2000
         private ulong _totalSamplesNumber = 0;
         private long _startSecondBuffered = -1;
         private long _endSecondBuffered = -1;
-
-        private List<byte[]> _bufferedSamples = new List<byte[]>();
-        //private byte[][] _bufferedSamples;                   //buffer for 10s-timed samples; it goes like [0-2][0-n], where n depdends on sampling frequency (time is const = 20s)
-        private short _totalNumberOfBuffers = 3;
-        //private short _currentBufferIndex = 0;              //buffers 0, 1, 2 can be used; every 20s; this is only counter to know which buffer is used
+        
+        private byte[] _bufferedSamples;                   //buffer for 20s-timed samples; it goes [0-n], where n depdends on sampling frequency (time is const = 20s)
         private const short _bufferSizeSeconds = 20;
-        //private short noOfBuffersPreloaded = 0;
-        private bool _readProcessStarted = false;
 
 
 
@@ -53,93 +48,76 @@ namespace SMOLS2000
                 
             }
 
-            //ensure try/catch structure is here (like a big IF)
+            //ensure try/catch structure is here (like a big IF)!!!
             var mediaInfo = FFProbe.Analyse(_filePath);
 
 
             _totalTimeMiliseconds = mediaInfo.Duration.TotalMilliseconds;
             _sampleRate = mediaInfo.PrimaryAudioStream.SampleRateHz;
             _totalSamplesNumber = (ulong)(_sampleRate / (double)1000 * _totalTimeMiliseconds);
+            _numberOfChannels = (short)mediaInfo.PrimaryAudioStream.Channels;
 
+    
 
+            var firstMemoryStream = Task.Run(() => readAudioChunk(0, _bufferSizeSeconds)).GetAwaiter().GetResult();
+            
 
-            //Task<MemoryStream> readTask = readAudioChunk(0, 10);
-            //readTask.Wait();
+            if (firstMemoryStream.Length == (2 * _numberOfChannels * _bufferSizeSeconds * _sampleRate))
+            {
+                _bufferedSamples = firstMemoryStream.ToArray();
+                _startSecondBuffered = 0;
+                _endSecondBuffered = _bufferSizeSeconds;
 
-            var memoryStream = Task.Run(() => readAudioChunk(0, 10)).GetAwaiter().GetResult();
-
-
-            long aaa = memoryStream.Length;
-
-            byte[] aaaa = memoryStream.ToArray();
-
-            //int aa = short.max
-
-
-            int kkk = 0;
+            }
+            else if(firstMemoryStream.Length > 0)
+            {
+                _bufferedSamples = firstMemoryStream.ToArray();
+                _startSecondBuffered = 0;
+                _endSecondBuffered = _bufferedSamples.Length / 2 / _numberOfChannels / _sampleRate;
+                //we got the file, but it's suspisiously short; an additional action *may* be required; perhaps a warning for user??
+            }
+            else
+            {
+                //error reading file; Do something, the app won't work!!
+            }
 
         }
 
 
         public short getSampleValue(long sampleNumber, short channel)
         {
+          
             long startSecondBuffered = _startSecondBuffered;
             long endSecondBuffered = _endSecondBuffered;
-            List<long> midSecondRanges = new List<long>();
+            
 
-            for(short i=0; i<((endSecondBuffered-startSecondBuffered)/ _bufferSizeSeconds); i++)
+            bool successfullyRead = false;
+
+
+            //now working, but should be refined - what if a wrong number of sample is called?
+            while (!successfullyRead)
             {
-                midSecondRanges.Add(startSecondBuffered + i* _bufferSizeSeconds);
-            }
-
-
-
-            for(short i=0; i<midSecondRanges.Count; i++)
-            {
-                if((sampleNumber/ _sampleRate >= midSecondRanges[i]) && (sampleNumber / _sampleRate < midSecondRanges[i] + _bufferSizeSeconds))
+                if ((sampleNumber / _sampleRate >=startSecondBuffered) && (sampleNumber / _sampleRate < endSecondBuffered))
                 {
-                    short sample = _bufferedSamples[i][sampleNumber * 2 + channel - _sampleRate * midSecondRanges[i]];
 
-                    if((i == midSecondRanges.Count - 1) && _readProcessStarted == false)
-                    {
-                        //start new read process (probably? what if one was started and didn't finish??)
+                    short sample = (short)((int)(_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2*channel - 2*_numberOfChannels*_sampleRate * startSecondBuffered] << 8) + ((int)_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2*channel - 2*_numberOfChannels*_sampleRate * startSecondBuffered + 1]) - 32768);
+                    int aaa = _bufferedSamples[sampleNumber * 2 * _numberOfChannels + channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered] << 8;
+                    int bbb = _bufferedSamples[sampleNumber * 2 * _numberOfChannels + channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered + 1];
 
-                        _readProcessStarted = true;
-                    }
-
+                    successfullyRead = true;                //is it useful?
                     return sample;
-                }
-            }
 
-
-            if (_readProcessStarted == false)
-            {
-                // we're out of scope of buffered audio; begin fresh buffering process just like loading a new file
-            }
-            else
-            {
-                //we're waiting for a read process to finish
-
-                while (_readProcessStarted == true) { }
-
-                return getSampleValue(sampleNumber, channel);
-
-            }
-
-
-            /*
-            if(((sampleBlock*10000+sampleNumber)/_sampleRate >= _startSecondBuffered )&& ((sampleBlock * 10000 + sampleNumber)/ _sampleRate < _endSecondBuffered)){
-                if (((sampleBlock * 10000 + sampleNumber) / _sampleRate >= (_startSecondBuffered+(_totalNumberOfBuffers-1)* _bufferSizeSeconds)) && ((sampleBlock * 10000 + sampleNumber) / _sampleRate < _endSecondBuffered))
-                {
-                    //start reading new 20s chunk of audio file, paste it to memory
-                    return 0;
                 }
                 else
                 {
-                    return 0;
+                    long startTime = ((long)(sampleNumber / _sampleRate)/_bufferSizeSeconds)*_bufferSizeSeconds;
+                    var memoryStream = Task.Run(() => readAudioChunk(startTime, startTime+_bufferSizeSeconds)).GetAwaiter().GetResult();
+                    _bufferedSamples = memoryStream.ToArray();
+                    startSecondBuffered = _startSecondBuffered = startTime;
+                    endSecondBuffered = _endSecondBuffered = startTime + _bufferedSamples.Length / 2 / _numberOfChannels/_sampleRate;               //this line can be responsible for cutting the end of file (< 1s); To be fixed
                 }
             }
-            */
+        
 
 
             return 0;
@@ -148,6 +126,7 @@ namespace SMOLS2000
 
         private async Task<MemoryStream> readAudioChunk(long secondStart, long secondEnd)
         {
+            
             var memoryStream = new MemoryStream();
 
             string time = "-ss " + secondStart + " -to " + secondEnd;
@@ -157,6 +136,7 @@ namespace SMOLS2000
                 .OutputToPipe(new StreamPipeSink(memoryStream), options => options.ForceFormat("u16be"))
                 .ProcessAsynchronously();
 
+
             return memoryStream;
         }
 
@@ -165,12 +145,6 @@ namespace SMOLS2000
         {
             return _fileName;
         }
-
-        public int testowanko()
-        {
-            return 0;
-        }
-
 
     }
 }
