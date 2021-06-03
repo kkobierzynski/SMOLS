@@ -38,6 +38,14 @@ namespace SMOLS2000
         {
             audiofile = new OpenFile(this);
 
+            for(int i=0; i<(int)audiofile.getTotalSamplesNumber(); i++)
+            {
+                short sample = audiofile.getSampleValue(i, 0);
+                audiofile.saveSampleValue(sample);
+            }
+
+            audiofile.saveFile();
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
