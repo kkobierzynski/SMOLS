@@ -13,11 +13,12 @@ namespace SMOLS2000
         static int sample_rate = 48000;                                             // WARTOSĆ TYMCZASOWA, W PRZYSZŁOŚCI ZOSTANIE OTRZTYMANA WARTOŚĆ ZMIENNA
         int num_samples = 3;
         int num_arrays = 2;                                                         //WARTOSĆ TYMCZASOWA, ZMIENIĆ NA LIST.SIZE ALBO ZMIENNĄ DOSTARCZONĄ OD MICHAŁA
-        int[,,] data = new int[2, 2, 3] { { { 1, 2, 3 }, { 4, 5, 6 } },             //WARTOŚĆ TYMCZASOWA TESTOWA
+        int[,] data = new int[2, 2, 3] { { { 1, 2, 3 }, { 4, 5, 6 } },             //WARTOŚĆ TYMCZASOWA TESTOWA
                                        { { 7, 8, 9 }, { 10, 11, 12 } } };
         int buffer_counter = 0;
         int release_counter = 0;
         int smooth_silencing_counter = 0;
+        int progress_counter = 0;
         List<int> samples_first_channel = new List<int>();                          //A list that containing samples from the first channel
         List<int> samples_second_channel = new List<int>();                         //A list that containing samples from the second channel
         List<int> buffer_first_channel = new List<int>();
@@ -36,19 +37,22 @@ namespace SMOLS2000
             double attack_smooth_silencing = attack_buffer - Math.Round(sample_rate * 0.01);
             double release_smooth_silencing = Math.Round(sample_rate * 0.01);
 
-            for (int i = 0; i<num_arrays; i++)
-            {
-                for (int j = 0; j<num_samples; j++)
+                for (int i = 0; i < num_samples; i++)
                 {
+                    if (i == progress_counter * (num_samples / 200))                      //part of the program responsible for progress bar loading.
+                    {
+                        mainWindow.progress_bar.Value = progress_counter;
+                        progress_counter = progress_counter++;
+                    }
                     
-                    if (data[i, 0, j] < threshold && data[i, 1, j] < threshold && checking_threshold)     //First Part - searching for a sample whose value is below the threshold
+                    if (data[i, 0] < threshold && data[i, 1] < threshold && checking_threshold)     //First Part - searching for a sample whose value is below the threshold
                     {
                         checking_threshold = false;
                         silence_verification = true;
                     }
                     else                            //Save samples if the value is above the threshold
                     {
-                        saving_samples(i, j);
+                        saving_samples(i);
                     }
 
                     if (silence_verification)               //Second part - checking if silence is detected
@@ -57,16 +61,16 @@ namespace SMOLS2000
                         {
                             buffer_counter++;
                             smooth_silencing_counter++;
-                            samples_first_channel.Add((int)(data[i, 0, j] * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));   //adding samples with progressively smaller values ​​to achieve smooth muting
-                            samples_second_channel.Add((int)(data[i, 1, j] * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));
+                            samples_first_channel.Add((int)(data[i, 0] * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));   //adding samples with progressively smaller values ​​to achieve smooth muting
+                            samples_second_channel.Add((int)(data[i, 1] * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));
                         }
                         else
                         {
-                            saving_samples(i, j);
+                            saving_samples(i);
                             buffer_counter++;
                         }
 
-                        if (data[i, 0, j] > threshold && data[i, 1, j] > threshold)     //If a sample with a value exceeding the threshold is found, go back to the first part
+                        if (data[i, 0] > threshold && data[i, 1] > threshold)     //If a sample with a value exceeding the threshold is found, go back to the first part
                         {
                             checking_threshold = true;
                             silence_verification = false;
@@ -84,8 +88,8 @@ namespace SMOLS2000
                     }
                     if (silence_cutting)                                        //Third part - cutting silence from the signal.
                     {
-                        buffer_first_channel.Add(data[i, 0, j]);                //Adding sample values ​​to the buffer that is responsible for release time
-                        buffer_second_channel.Add(data[i, 1, j]);
+                        buffer_first_channel.Add(data[i, 0]);                //Adding sample values ​​to the buffer that is responsible for release time
+                        buffer_second_channel.Add(data[i, 1]);
                         
                         if (release_counter < release_buffer)                   //Defining size of buffer
                         {
@@ -97,7 +101,7 @@ namespace SMOLS2000
                             buffer_second_channel.RemoveRange(0, 1);
                         }
 
-                        if (data[i, 0, j] > threshold || data[i, 1, j] > threshold)     //The sample value has exceeded the threshold //uwazac bo czasami nie zdazy sie zapelnic cały bufor
+                        if (data[i, 0] > threshold || data[i, 1] > threshold)     //The sample value has exceeded the threshold //uwazac bo czasami nie zdazy sie zapelnic cały bufor
                         {
                             for (int k = 0; k < release_smooth_silencing; k++)
                             {
@@ -115,19 +119,18 @@ namespace SMOLS2000
                     }
 
                 }
-                //int[] array = samples_first_channel.ToArray(); //ta tablica moze być pusta (ciagle cisza) moze mieć rozmiar wielkości i albo też o wiele większa(wrzucenie release time)
+                //int[] array = samples_first_channel.ToArray();
                 //samples_first_channel.Clear();
                 //TRZEBA BEDZIE CZYŚCIĆ BUFORY (buffer_first_channel.Clear(); buffer_second_channel.Clear();) NA WSZELKI WYPADEK JAKBY DZIAŁANIE PROGRAMU ZAKOŃCZYŁA SIE W POŁOWIE ORAZ BY PRZYGOTOWAĆ PROGRAM DO CZYSZCZENIA KOLEJNEGO PLIKU!!!!!!!! PRAWDOPODOBNIE NA WYJSCIU FORA
                 //BĘDZIE TRZEBA DODAĆ PRZYPISYWANIE LISTY DO DANEJ TABLICY ORAZ WYKONAĆ CZYSZCZENIE LISTY TAK BY KOLEJNE 10000 PRÓBEK ZAPISYWAŁO SIE OD NOWA (OSZCZĘDNOŚC PAMIĘCI)
                 //ZASTANOWAIĆ SIĘ CZY NIE BĘDZIE KONIECZNE WRZUCENIE NA KONIEC BOOLEANÓW TAK BY STATUSY DZIAŁAŁY POPRAWNIE NAWET JAK UŻYTKOWNIK NIE WYJDZIE Z PROGRAMU
-            }
 
         }
 
-        private void saving_samples(int i, int j)
+        private void saving_samples(int i)
         {
-            samples_first_channel.Add(data[i,0,j]);
-            samples_second_channel.Add(data[i, 1, j]);
+            samples_first_channel.Add(data[i,0]);
+            samples_second_channel.Add(data[i, 1]);
         }
 
     }

@@ -25,7 +25,6 @@ namespace SMOLS2000
         CutSilence cut;
         DrawWaveform drawnWaveform;
 
-
         public MainWindow()
         {
             InitializeComponent();
@@ -53,6 +52,11 @@ namespace SMOLS2000
         private void Slider_ValueChanged_1(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
+        }
+
+        private void ProgressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            
         }
     }
 }
