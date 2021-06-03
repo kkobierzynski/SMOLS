@@ -28,16 +28,16 @@
 
         </Grid>
 
-        <Canvas x:Name="appMainCanvas" >
-            <Label Content="Source:" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" FontSize="18"/>
-            <Label Content="Waveform:" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" FontSize="18"/>
-            <Label Content="Attack / Release time:" HorizontalAlignment="Left" Margin="12,245,0,0" VerticalAlignment="Top" FontSize="18"/>
-            <Label Content="Threshold:" HorizontalAlignment="Left" Margin="12,311,0,0" VerticalAlignment="Top" FontSize="18"/>
-            <Label Content="Duration before:" HorizontalAlignment="Left" Margin="300,406,0,0" VerticalAlignment="Top" Width="146" FontSize="18"/>
-            <Label Content="Duration after:" HorizontalAlignment="Left" Margin="300,441,0,0" VerticalAlignment="Top" Width="146" FontSize="18"/>
-            <Label Content="Source" HorizontalAlignment="Left" Margin="120,34,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Source"/>
-            <Label Content="Time_before" HorizontalAlignment="Left" Margin="510,441,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Time_before"/>
-            <Label Content="Time_after" HorizontalAlignment="Left" Margin="510,406,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Time_after"/>
+        <Canvas x:Name="appMainCanvas" Height="584" VerticalAlignment="Top" >
+            <Label Content="Source:" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="#FF535353"/>
+            <Label Content="Waveform:" HorizontalAlignment="Left" Margin="10,73,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="#FF535353"/>
+            <Label Content="Attack / Release time:" HorizontalAlignment="Left" Margin="12,245,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="#FF535353"/>
+            <Label Content="Threshold:" HorizontalAlignment="Left" Margin="12,311,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold" Foreground="#FF535353"/>
+            <Label Content="Duration before:" HorizontalAlignment="Left" Margin="300,406,0,0" VerticalAlignment="Top" Width="146" FontSize="18" Foreground="#FF535353" FontWeight="Bold"/>
+            <Label Content="Duration after:" HorizontalAlignment="Left" Margin="300,441,0,0" VerticalAlignment="Top" Width="146" FontSize="18" Foreground="#FF535353" FontWeight="Bold"/>
+            <Label Content="Select 'Source' to continue" HorizontalAlignment="Left" Margin="120,34,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Source"/>
+            <Label Content="--:--:--" HorizontalAlignment="Left" Margin="510,441,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Time_before"/>
+            <Label Content="--:--:--" HorizontalAlignment="Left" Margin="510,406,0,0" VerticalAlignment="Top" FontSize="18" AutomationProperties.Name="Time_after"/>
             <Image Name="waveform" Height="100" Canvas.Left="10" Canvas.Top="121" Width="772"/>
             <Slider HorizontalAlignment="Left" Margin="300,254,0,0" VerticalAlignment="Top" Width="350" ValueChanged="Slider_ValueChanged" Value="0" Minimum="-0.07" Maximum="0.21" Name="A_r_time_slider"/>
             <Slider HorizontalAlignment="Left" Margin="300,319,0,0" VerticalAlignment="Top" Width="350" ValueChanged="Slider_ValueChanged_1" Name="Threshold_slider" Maximum="20" Minimum="-20" SmallChange="1"/>
@@ -61,11 +61,11 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button Content="START" HorizontalAlignment="Left" Margin="12,406,0,0" VerticalAlignment="Top" Width="181" Height="69" FontSize="22" Click="Button_Click"/>
-            <StatusBar Margin="10,526,10,10" Height="30" Width="600"/>
-            
+            <Button Content="START" HorizontalAlignment="Left" Margin="12,406,0,0" VerticalAlignment="Top" Width="181" Height="69" FontSize="22" Click="Button_Click" FontWeight="Bold"/>
+            <ProgressBar Margin="10,533,10,10" Name="progress_bar" ValueChanged="ProgressBar_ValueChanged" Width="760" Height="20" Maximum="200"/>
 
         </Canvas>
+
 
     </Grid>
 </Window>
