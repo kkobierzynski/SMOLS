@@ -37,19 +37,20 @@ namespace SMOLS2000
         {
             audiofile = new OpenFile(this);
 
-            for(int i=0; i<(int)audiofile.getTotalSamplesNumber(); i++)
+           /* for(int i=0; i<(int)audiofile.getTotalSamplesNumber(); i++)
             {
                 short sample = audiofile.getSampleValue(i, 0);
                 audiofile.saveSampleValue(sample);
             }
 
-            audiofile.saveFile();
+            audiofile.saveFile();*/
 
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            cut = new CutSilence(this);
+            cut = new CutSilence(this, audiofile);
+            cut.saving();
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
