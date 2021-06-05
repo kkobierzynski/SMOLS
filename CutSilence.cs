@@ -10,11 +10,6 @@ namespace SMOLS2000
 {
     class CutSilence
     {
-        static int sample_rate = 48000;                                             // WARTOSĆ TYMCZASOWA, W PRZYSZŁOŚCI ZOSTANIE OTRZTYMANA WARTOŚĆ ZMIENNA
-        int num_samples = 3;
-        int num_arrays = 2;                                                         //WARTOSĆ TYMCZASOWA, ZMIENIĆ NA LIST.SIZE ALBO ZMIENNĄ DOSTARCZONĄ OD MICHAŁA
-        int[,] data = new int[2, 2, 3] { { { 1, 2, 3 }, { 4, 5, 6 } },             //WARTOŚĆ TYMCZASOWA TESTOWA
-                                       { { 7, 8, 9 }, { 10, 11, 12 } } };
         int buffer_counter = 0;
         int release_counter = 0;
         int smooth_silencing_counter = 0;
@@ -26,31 +21,33 @@ namespace SMOLS2000
         bool checking_threshold = true;                                             //Boolean variables responsible for the operation of states
         bool silence_verification = false;
         bool silence_cutting = false;
+        private OpenFile audio_open_file;
         
-        public CutSilence(MainWindow mainWindow)
+        public CutSilence(MainWindow mainWindow, OpenFile audio_open)
         {
+            audio_open_file = audio_open;
             double buffer_slider = mainWindow.A_r_time_slider.Value;                                  //Value from slider Attack/Release time
-            double attack_buffer = Math.Round(sample_rate * (0.05 + buffer_slider * (5 / 7.0)));      //Determines the number of samples to be checked when a sample below the threshold is detected. Prevents low value samples from being cut from a non-silent signal
-            int release_buffer = (int)Math.Round(sample_rate * (0.02 + buffer_slider * (2 / 7.0)));
-            double treshold_slider = mainWindow.Threshold_slider.Value;                               // w przyszłośći ogarnąć poprawne zakresy w zależności od wartości otrzymanych danych
-            int threshold = 36 + (int)Math.Round(treshold_slider);                                      // w przyszłośći ogarnąć poprawne zakresy w zależności od wartości otrzymanych danych
-            double attack_smooth_silencing = attack_buffer - Math.Round(sample_rate * 0.01);
-            double release_smooth_silencing = Math.Round(sample_rate * 0.01);
+            double attack_buffer = Math.Round(audio_open_file.getSampleRate() * (0.05 + buffer_slider * (5 / 7.0)));      //Determines the number of samples to be checked when a sample below the threshold is detected. Prevents low value samples from being cut from a non-silent signal
+            int release_buffer = (int)Math.Round(audio_open_file.getSampleRate() * (0.02 + buffer_slider * (2 / 7.0)));
+            double treshold_slider = mainWindow.Threshold_slider.Value;
+            int threshold = 500 + (int)Math.Round(treshold_slider);                                      //w zależności od wartości otrzymanych danych
+            double attack_smooth_silencing = attack_buffer - Math.Round(audio_open_file.getSampleRate() * 0.01);
+            double release_smooth_silencing = Math.Round(audio_open_file.getSampleRate() * 0.01);
 
-                for (int i = 0; i < num_samples; i++)
+                for (int i = 0; i < (int)audio_open_file.getTotalSamplesNumber()- 16000/*WARTOŚĆ TYMCZASOWA*/; i++)
                 {
-                    if (i == progress_counter * (num_samples / 200))                      //part of the program responsible for progress bar loading.
+                    if (i == progress_counter * (((int)audio_open_file.getTotalSamplesNumber() - 16000/*WARTOŚĆ TYMCZASOWA*/) / 200))           //part of the program responsible for progress bar loading.
                     {
-                        mainWindow.progress_bar.Value = progress_counter;
-                        progress_counter = progress_counter++;
+                        mainWindow.progress_bar.Value += 1;
+                        progress_counter++;
                     }
                     
-                    if (data[i, 0] < threshold && data[i, 1] < threshold && checking_threshold)     //First Part - searching for a sample whose value is below the threshold
+                    if (audio_open_file.getSampleValue(i, 0) < threshold && audio_open_file.getSampleValue(i, 0/*1*/) < threshold && checking_threshold)     //First Part - searching for a sample whose value is below the threshold
                     {
                         checking_threshold = false;
                         silence_verification = true;
                     }
-                    else                            //Save samples if the value is above the threshold
+                    if(checking_threshold)                  //Save samples if the value is above the threshold
                     {
                         saving_samples(i);
                     }
@@ -61,8 +58,8 @@ namespace SMOLS2000
                         {
                             buffer_counter++;
                             smooth_silencing_counter++;
-                            samples_first_channel.Add((int)(data[i, 0] * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));   //adding samples with progressively smaller values ​​to achieve smooth muting
-                            samples_second_channel.Add((int)(data[i, 1] * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));
+                            samples_first_channel.Add((int)(audio_open_file.getSampleValue(i, 0) * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));   //adding samples with progressively smaller values ​​to achieve smooth muting
+                            samples_second_channel.Add((int)(audio_open_file.getSampleValue(i, 0/*1*/) * ((attack_buffer - attack_smooth_silencing - smooth_silencing_counter) / (attack_buffer - attack_smooth_silencing))));
                         }
                         else
                         {
@@ -70,7 +67,7 @@ namespace SMOLS2000
                             buffer_counter++;
                         }
 
-                        if (data[i, 0] > threshold && data[i, 1] > threshold)     //If a sample with a value exceeding the threshold is found, go back to the first part
+                        if (audio_open_file.getSampleValue(i, 0) > threshold && audio_open_file.getSampleValue(i, 0/*1*/) > threshold)     //If a sample with a value exceeding the threshold is found, go back to the first part
                         {
                             checking_threshold = true;
                             silence_verification = false;
@@ -88,8 +85,8 @@ namespace SMOLS2000
                     }
                     if (silence_cutting)                                        //Third part - cutting silence from the signal.
                     {
-                        buffer_first_channel.Add(data[i, 0]);                //Adding sample values ​​to the buffer that is responsible for release time
-                        buffer_second_channel.Add(data[i, 1]);
+                        buffer_first_channel.Add(audio_open_file.getSampleValue(i, 0));                //Adding sample values ​​to the buffer that is responsible for release time
+                        buffer_second_channel.Add(audio_open_file.getSampleValue(i, 0/*1*/));
                         
                         if (release_counter < release_buffer)                   //Defining size of buffer
                         {
@@ -100,13 +97,16 @@ namespace SMOLS2000
                             buffer_first_channel.RemoveRange(0, 1);             //Removing the oldest samples
                             buffer_second_channel.RemoveRange(0, 1);
                         }
-
-                        if (data[i, 0] > threshold || data[i, 1] > threshold)     //The sample value has exceeded the threshold //uwazac bo czasami nie zdazy sie zapelnic cały bufor
+                        
+                        if (audio_open_file.getSampleValue(i, 0) > threshold || audio_open_file.getSampleValue(i, 0/*1*/) > threshold)     //The sample value has exceeded the threshold //uwazac bo czasami nie zdazy sie zapelnic cały bufor
                         {
-                            for (int k = 0; k < release_smooth_silencing; k++)
+                            if (release_counter == release_buffer)              //checking if the buffer has been completely full
                             {
-                                buffer_first_channel[k] = (int)(buffer_first_channel[k] * (k / release_smooth_silencing));      //adding samples with progressively larger values ​​to achieve smooth transition
-                                buffer_second_channel[k] = (int)(buffer_second_channel[k] * (k / release_smooth_silencing));
+                                for (int k = 0; k < release_smooth_silencing; k++)
+                                {
+                                    buffer_first_channel[k] = (int)(buffer_first_channel[k] * (k / release_smooth_silencing));      //adding samples with progressively larger values ​​to achieve smooth transition
+                                    buffer_second_channel[k] = (int)(buffer_second_channel[k] * (k / release_smooth_silencing));
+                                }
                             }
                             samples_first_channel.AddRange(buffer_first_channel);       //Adding samples that are included in the release time
                             samples_second_channel.AddRange(buffer_second_channel);
@@ -127,10 +127,21 @@ namespace SMOLS2000
 
         }
 
-        private void saving_samples(int i)
+        private void saving_samples(int i)          //saving samles to the list. Value of the actual sample is taken from class OpenFile.cs
         {
-            samples_first_channel.Add(data[i,0]);
-            samples_second_channel.Add(data[i, 1]);
+            samples_first_channel.Add(audio_open_file.getSampleValue(i,0));
+            samples_second_channel.Add(audio_open_file.getSampleValue(i, 0/*1*/));
+            //audio_open_file.saveSampleValue(audio_open_file.getSampleValue(i, 0));
+
+        }
+
+        public void saving()
+        {
+            for(int i =0; i < samples_first_channel.Count; i++)
+            {
+                audio_open_file.saveSampleValue((short)samples_first_channel[i]);
+            }
+            audio_open_file.saveFile();
         }
 
     }
