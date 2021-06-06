@@ -139,8 +139,24 @@ namespace SMOLS2000
                 {
                     if ((sampleNumber / _sampleRate >= startSecondBuffered) && (sampleNumber / _sampleRate < endSecondBuffered))
                     {
+                        short sample = 0;
 
-                        short sample = (short)((int)(_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2 * channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered] << 8) + ((int)_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2 * channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered + 1]) - 32768);
+
+                        //a temporary workaround for compressed files (mp3, ac3, etc...);
+                        if (endSecondBuffered - startSecondBuffered < 20)
+                        {
+                            try
+                            {
+                                sample = (short)((int)(_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2 * channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered] << 8) + ((int)_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2 * channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered + 1]) - 32768);
+                            }catch(Exception e)
+                            {
+                                sample = 0;
+                            }
+
+                            return sample;
+                        }
+
+                        sample = (short)((int)(_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2 * channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered] << 8) + ((int)_bufferedSamples[sampleNumber * 2 * _numberOfChannels + 2 * channel - 2 * _numberOfChannels * _sampleRate * startSecondBuffered + 1]) - 32768);
 
                         successfullyRead = true;                //is it useful?
                         return sample;
