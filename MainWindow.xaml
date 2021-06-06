@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SMOLS2000"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        ResizeMode="CanMinimize"
+        Title="SMOLS2000" Height="600" Width="800">
     <Grid>
         <DockPanel Visibility="Visible">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
-                    <MenuItem Header="_Open"/>
-                    <MenuItem Header="_Close"/>
-                    <MenuItem Header="_Save"/>
-                    <MenuItem Header="_Exit"/>
+                    <MenuItem x:Name="openFileMenuItem" Header="_Open"/>
+                    <MenuItem x:Name="closeFileMenuItem" Header="_Close"/>
+                    <MenuItem x:Name="saveResultMenuItem" Header="_Save"/>
+                    <MenuItem x:Name="exitAppMenuItem" Header="_Exit" Click="exitAppMenuItem_Click"/>
                 </MenuItem>
                 <MenuItem Header="Help"/>
             </Menu>
