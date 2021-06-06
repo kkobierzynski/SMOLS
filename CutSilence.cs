@@ -34,11 +34,13 @@ namespace SMOLS2000
             double attack_smooth_silencing = attack_buffer - Math.Round(audio_open_file.getSampleRate() * 0.01);
             double release_smooth_silencing = Math.Round(audio_open_file.getSampleRate() * 0.01);
 
-                for (int i = 0; i < (int)audio_open_file.getTotalSamplesNumber()- 16000/*WARTOŚĆ TYMCZASOWA*/; i++)
+                for (int i = 0; i < (int)audio_open_file.getTotalSamplesNumber(); i++)
                 {
-                    if (i == progress_counter * (((int)audio_open_file.getTotalSamplesNumber() - 16000/*WARTOŚĆ TYMCZASOWA*/) / 200))           //part of the program responsible for progress bar loading.
+                    if (i == progress_counter * (((int)audio_open_file.getTotalSamplesNumber()) / 200))           //part of the program responsible for progress bar loading.
                     {
-                        mainWindow.progress_bar.Value += 1;
+                        //A workaround for working status bar; Call it AS RARELY AS POSSIBLE as this kind of dispatcher hurts application's performance.
+                        //I suggest calling this part of code 50 times during whole convertion process; It will be enough to show the progress and it won't hurt the performance as well.
+                        mainWindow.Dispatcher.Invoke((Action)(() => { mainWindow.progress_bar.Value += 1; }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
                         progress_counter++;
                     }
                     
