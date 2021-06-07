@@ -139,11 +139,15 @@ namespace SMOLS2000
 
         public void saving()
         {
+            SaveFile saveFile = new SaveFile(audio_open_file);
+
             for(int i =0; i < samples_first_channel.Count; i++)
             {
-                audio_open_file.saveSampleValue((short)samples_first_channel[i]);
+                //audio_open_file.saveSampleValue((short)samples_first_channel[i]);
+                saveFile.saveSingleSample((short)samples_first_channel[i], 0);
             }
-            audio_open_file.saveFile();
+            //audio_open_file.saveFile();
+            saveFile.Close();
         }
 
     }
