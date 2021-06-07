@@ -36,17 +36,25 @@ namespace SMOLS2000
 
 
 
-        public OpenFile(MainWindow mainWindow)
+        public OpenFile(MainWindow mainWindow) : this(mainWindow, null) { }
+
+        public OpenFile(MainWindow mainWindow, string filePath)
         {
-           
-            OpenFileDialog openFile = new OpenFileDialog();
-            openFile.Filter = "Audio files (*.wav, *.flac, *.mp3, *.m4a, *.ogg)|*.wav; *.flac; *.mp3; *.m4a; *.ogg|All files (*.*)|*.*";
+            if (filePath == null)
+            {
+
+                OpenFileDialog openFile = new OpenFileDialog();
+                openFile.Filter = "Audio files (*.wav, *.flac, *.mp3, *.m4a, *.ogg)|*.wav; *.flac; *.mp3; *.m4a; *.ogg|All files (*.*)|*.*";
 
 
-            if (openFile.ShowDialog() == true)
-                _filePath = openFile.FileName;
-            
+                if (openFile.ShowDialog() == true)
+                    _filePath = openFile.FileName;
 
+            }
+            else
+            {
+                _filePath = filePath;
+            }
             //ensure try/catch structure is here (like a big IF)!!!
 
             //if file name is empty - no file was opened; we don't want to run anything then
@@ -405,6 +413,11 @@ namespace SMOLS2000
         public ulong getTotalSamplesNumber()
         {
             return _totalSamplesNumber;
+        }
+
+        public short getNumberOfChannels()
+        {
+            return _numberOfChannels;
         }
 
 

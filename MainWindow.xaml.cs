@@ -21,7 +21,7 @@ namespace SMOLS2000
     /// </summary>
     public partial class MainWindow : Window
     {
-        OpenFile audiofile;
+        OpenFile audioFile;
         CutSilence cut;
         DrawWaveform drawnWaveform;
 
@@ -31,17 +31,37 @@ namespace SMOLS2000
 
             drawnWaveform = new DrawWaveform(this);
 
+
+            openFileGrid.AllowDrop = true;
+            openFileGrid.DragEnter += OpenFileGrid_DragEnter;
+            openFileGrid.Drop += OpenFileGrid_Drop;
+
+
+
+
+        }
+
+        private void OpenFileGrid_Drop(object sender, DragEventArgs e)
+        {
+            string[] file = (string[])e.Data.GetData(DataFormats.FileDrop);
+            audioFile = new OpenFile(this, file[0]);
+
+        }
+
+        private void OpenFileGrid_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effects = DragDropEffects.Copy;
         }
 
         private void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            audiofile = new OpenFile(this);
+            audioFile = new OpenFile(this);
 
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            cut = new CutSilence(this, audiofile);
+            cut = new CutSilence(this, audioFile);
             cut.saving();
         }
 
