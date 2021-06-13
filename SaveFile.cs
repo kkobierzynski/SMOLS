@@ -43,10 +43,10 @@ namespace SMOLS2000
             //think about default format(s)...
 
             SaveFileDialog saveFile = new SaveFileDialog();
-            //default selected file type - WAV
-            saveFile.DefaultExt = ".wav";
+            //default selected file type - mp3
+            saveFile.DefaultExt = ".mp3";
             saveFile.Title = "Save modified audio file";
-            saveFile.Filter = "Audio files (*.wav, *.flac, *.mp3, *.m4a, *.ogg)|*.wav; *.flac; *.mp3; *.m4a; *.ogg|Wszystkie pliki (*.*)|*.*";
+            saveFile.Filter = "Audio files (*.wav, *.flac, *.mp3, *.m4a, *.ogg)|*.mp3; *.flac; *.wav; *.m4a; *.ogg|All files (*.*)|*.*";
 
             //change UI, prepare app to be able to receive another file
             if (saveFile.ShowDialog() == true)
@@ -54,6 +54,7 @@ namespace SMOLS2000
                 _filePath = saveFile.FileName;
                 _fileExtension = _filePath.Substring(_filePath.LastIndexOf('.') + 1);
             }
+
         }
 
 
@@ -89,7 +90,7 @@ namespace SMOLS2000
                 {
                     saveAudioChunk();
 
-                    for (short i = 0; i < _openFile.getNumberOfChannels(); i++)
+                    for (short i = (short)(_openFile.getNumberOfChannels()-1); i >=0; i--)
                     {
                         _samplesBuffer.RemoveAt(i);
                     }
@@ -109,9 +110,24 @@ namespace SMOLS2000
 
             List<byte> samplesStream = new List<byte>();
 
+            short localChannelsToBeSaved;
+
+            //we want > 2 channels only if target format supports it; in this "if" statement include all formats supporting > 2 channels;
+            if (_fileExtension.Equals("wav", StringComparison.InvariantCultureIgnoreCase))
+            {
+                localChannelsToBeSaved = _openFile.getNumberOfChannels();
+            }
+            else
+            {
+                localChannelsToBeSaved = 2;
+            }
+
+
+
+
             for (int i = 0; i < _openFile.getSampleRate(); i++)
             {
-                for (short j = 0; j < _openFile.getNumberOfChannels(); j++)
+                for (short j = 0; j < localChannelsToBeSaved; j++)
                 {
                     samplesStream.Add(_samplesBuffer[j][2 * i]);
                     samplesStream.Add(_samplesBuffer[j][2 * i + 1]);
@@ -125,12 +141,12 @@ namespace SMOLS2000
             }else if(_fileExtension.Equals("mp3", StringComparison.InvariantCultureIgnoreCase))
             {
                 //write mp3 using LAME library
-                saveMp3Chunk(samplesStream);
+                saveMp3Chunk(samplesStream, localChannelsToBeSaved);
             }
             else
             {
                 //if unknown format - use mp3 as default (optimal file size)
-                saveWavChunk(samplesStream);
+                saveMp3Chunk(samplesStream, localChannelsToBeSaved);
             }
 
 
@@ -158,7 +174,7 @@ namespace SMOLS2000
         }
 
 
-        private void saveMp3Chunk(List<byte> samplesStream)
+        private void saveMp3Chunk(List<byte> samplesStream, short channels)
         {
 
             if (!_isSaving)
@@ -166,7 +182,7 @@ namespace SMOLS2000
                 //initiate saving
                 
                 //resampler is a must here! Sampling rates higher than 48k are rejected automatically; #TODO
-                _lameWriter = new LameMP3FileWriter(_filePath, new WaveFormat(_openFile.getSampleRate(), 16, _openFile.getNumberOfChannels()), LAMEPreset.V0);
+                _lameWriter = new LameMP3FileWriter(_filePath, new WaveFormat(_openFile.getSampleRate(), 16, channels), LAMEPreset.V0);
 
                 _isSaving = true;
             }
@@ -194,7 +210,7 @@ namespace SMOLS2000
             _isSaving = false;
             _flushCounter = 0;
 
-            for (short i = 0; i < _openFile.getNumberOfChannels(); i++)
+            for (short i = (short)(_openFile.getNumberOfChannels()-1); i >=0; i--)
             {
                 _samplesBuffer.RemoveAt(i);
             }
