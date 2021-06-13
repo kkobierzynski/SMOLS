@@ -127,7 +127,6 @@ namespace SMOLS2000
                     //An error for user - a file is empty / couldn't be opened;
                 }
             }
-            
 
         }
 
@@ -142,7 +141,7 @@ namespace SMOLS2000
                 bool successfullyRead = false;
 
 
-                //now working, but should be refined - what if a wrong number of sample is called?
+                //now partially working, but has to be refined - what if a wrong number of sample is called? (and other issues...)
                 while (!successfullyRead)
                 {
                     if ((sampleNumber / _sampleRate >= startSecondBuffered) && (sampleNumber / _sampleRate < endSecondBuffered))
