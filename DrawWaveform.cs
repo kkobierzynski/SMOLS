@@ -17,10 +17,18 @@ using System.Windows.Shapes;
 
 namespace SMOLS2000
 {
+    
+    /// <summary>
+    /// A prototype of the class allowing to draw a waveform basing on the table of samples.
+    /// </summary>
     class DrawWaveform
     {
-        static WriteableBitmap writeableBitmap;
+        private static WriteableBitmap writeableBitmap;
 
+        /// <summary>
+        /// Method draws a test waveform in accordance with the class description.
+        /// </summary>
+        /// <param name="mainWindow">Current instance of mainWindow class</param>
         public DrawWaveform(MainWindow mainWindow)
         {
             int maxWidth = 752;
