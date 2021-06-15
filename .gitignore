@@ -11,15 +11,9 @@
 *.sln.docstates
 
 
-# TEMP files exclude (docs incomplete)
+# files exclude (docs)
 log.txt
-ClassDiagram.png
-ClassDiagram.cd
-index.md
-articles/
-api/
-_site/
-toc.yml
+Docs/
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
