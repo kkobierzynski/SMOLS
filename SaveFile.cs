@@ -12,23 +12,29 @@ using System.Windows;
 
 namespace SMOLS2000
 {
-    class SaveFile
+    /// <summary>
+    /// Class containing objects responsible for AV files saving.
+    /// </summary>
+    public class SaveFile
     {
 
-        OpenFile _openFile;
+        private OpenFile _openFile;
 
-        List<List<byte>> _samplesBuffer;                       //1 second buffer for saving samples in chunks (great performance advantage)
+        private List<List<byte>> _samplesBuffer;                       //1 second buffer for saving samples in chunks (great performance advantage)
 
         private string _filePath;
         private string _fileExtension;
         private bool _isSaving = false;
 
-        WaveFileWriter _audioWriter;
-        LameMP3FileWriter _lameWriter;
+        private WaveFileWriter _audioWriter;
+        private LameMP3FileWriter _lameWriter;
 
-        short _flushCounter = 0;
+        private short _flushCounter = 0;
 
-
+        /// <summary>
+        /// Constructor created as a beginning for saving file sequence. Constructor opens new user dialog for saving file and saves new file path as an internal property.
+        /// </summary>
+        /// <param name="openFile">Current instance of openFile class; Thanks to this one can read all required properties</param>
         public SaveFile(OpenFile openFile)
         {
             _openFile = openFile;
@@ -57,8 +63,11 @@ namespace SMOLS2000
 
         }
 
-
-
+        /// <summary>
+        /// Method used for saving every single output sample (one-way data flow).
+        /// </summary>
+        /// <param name="value">Value of a sample (signed 16-bit short)</param>
+        /// <param name="channel">Select channel number; Avoid selecting non-existing channel</param>
         public void saveSingleSample(short value, short channel)
         {
             var sampleBytes = BitConverter.GetBytes(value);
@@ -105,6 +114,10 @@ namespace SMOLS2000
             
         }
 
+        /// <summary>
+        /// Internal method saves given group of samples (if there are enough samples available).
+        /// They may be saved into RAM memory or step-by-step to the file (depends on selected file format).
+        /// </summary>
         private void saveAudioChunk()
         {
 
@@ -137,7 +150,7 @@ namespace SMOLS2000
 
             if (_fileExtension.Equals("wav", StringComparison.InvariantCultureIgnoreCase))
             {
-                saveWavChunk(samplesStream);
+                saveWavChunk(samplesStream, localChannelsToBeSaved);
             }else if(_fileExtension.Equals("mp3", StringComparison.InvariantCultureIgnoreCase))
             {
                 //write mp3 using LAME library
@@ -152,14 +165,18 @@ namespace SMOLS2000
 
         }
 
-
-        private void saveWavChunk(List<byte> samplesStream)
+        /// <summary>
+        /// Internal method for saving one WAV file chunk.
+        /// </summary>
+        /// <param name="samplesStream">1D bytes list containing linearised local samples buffer (all channels)</param>
+        /// <param name="channels">Number of channels to save in WAV file</param>
+        private void saveWavChunk(List<byte> samplesStream, short channels)
         {
            
             if (!_isSaving)
             {
                 //initiate saving
-                _audioWriter = new WaveFileWriter(_filePath, new WaveFormat(_openFile.getSampleRate(), 16, _openFile.getNumberOfChannels()));
+                _audioWriter = new WaveFileWriter(_filePath, new WaveFormat(_openFile.getSampleRate(), 16, channels));
                 _isSaving = true;
             }
 
@@ -173,7 +190,11 @@ namespace SMOLS2000
             }
         }
 
-
+        /// <summary>
+        /// Internal method for saving one mp3 file chunk.
+        /// </summary>
+        /// <param name="samplesStream">1D bytes list containing linearised local samples buffer (all channels)</param>
+        /// <param name="channels">Number of channels to save in mp3 file</param>
         private void saveMp3Chunk(List<byte> samplesStream, short channels)
         {
 
@@ -191,7 +212,9 @@ namespace SMOLS2000
 
         }
 
-
+        /// <summary>
+        /// Release resources, close saved files.
+        /// </summary>
         public void Close()
         {
             

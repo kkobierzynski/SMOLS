@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SMOLS2000</name>
+    </assembly>
+    <members>
+        <member name="T:SMOLS2000.App">
+            <summary>
+            Interaction logic for the App.xaml class.
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:SMOLS2000.MainWindow">
+            <summary>
+            Interaction logic for the MainWindow.xaml class.
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.#ctor">
+            <summary>
+            Main window entrance constructor.
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.OpenFileGrid_Drop(System.Object,System.Windows.DragEventArgs)">
+            <summary>
+            Method used for opening file through drag-drop procedure.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.OpenFileGrid_DragEnter(System.Object,System.Windows.DragEventArgs)">
+            <summary>
+            Method used for a special effect while doing drag-drop procedure.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.openFileButton_Click(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Method for opening AV file through "Open" button.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.Button_Click(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Method invoking processing and saving procedures (after file is loaded).
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.Slider_ValueChanged(System.Object,System.Windows.RoutedPropertyChangedEventArgs{System.Double})">
+            <summary>
+            Method responsible for updating attack/release time coefficient (not implemented yet).
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.Slider_ValueChanged_1(System.Object,System.Windows.RoutedPropertyChangedEventArgs{System.Double})">
+            <summary>
+            Method responsible for updating threshold coefficient (not implemented yet).
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.exitAppMenuItem_Click(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Exit button method.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:SMOLS2000.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:SMOLS2000.OpenFile">
+            <summary>
+            Class contains objects representing 1 open audio file.
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.#ctor(SMOLS2000.MainWindow)">
+            <summary>
+            Constructor for initializing opening file sequence (with "Open" button).
+            </summary>
+            <param name="mainWindow">Current instance of mainWindow class</param>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.#ctor(SMOLS2000.MainWindow,System.String)">
+            <summary>
+            Constructor for initializing opening file sequence (using drag/drop function, providing file path).
+            </summary>
+            <param name="mainWindow">Current instance of mainWindow class</param>
+            <param name="filePath">Complete path to the AV file (passed as a string)</param>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getSampleValue(System.Int64,System.Int16)">
+            <summary>
+            Method returns one sample (signed short) at a given number and channel.
+            </summary>
+            <param name="sampleNumber">Number of sample that has to be returned (starting with 0)</param>
+            <param name="channel">Channel number (starting with 0)</param>
+            <returns>1 short value, representing sample value (signed 16-bit short)</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.readAudioChunk(System.Int64,System.Int64)">
+            <summary>
+            Asynchronous task aimed to read a certain chunk of open file.
+            </summary>
+            <param name="secondStart">Starting second of extracted chunk</param>
+            <param name="secondEnd">Ending second of extracted chunk</param>
+            <returns>Memory chunk containing retrieved samples</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.audioFileAnalysis">
+            <summary>
+            Method updating open AV file parameters (noise power, signal power, etc.).
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getPlayTime">
+            <summary>
+            Method returns total time of open AV file as a string.
+            </summary>
+            <returns>String containing total AV play time</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getSignalLevel">
+            <summary>
+            Returns calculated normalised signal level.
+            </summary>
+            <returns>Normalised signal level (double min=0, max=1)</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getNoiseLevel">
+            <summary>
+            Returns calculated normalised noise level.
+            </summary>
+            <returns>Normalised noise level (double min=0, max=1)</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getFileName">
+            <summary>
+            Returns file name string (name, not full path).
+            </summary>
+            <returns>Name file string</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getSampleRate">
+            <summary>
+            Returns sample rate as an integer in Hz.
+            </summary>
+            <returns>Sample rate in Hz</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getTotalSamplesNumber">
+            <summary>
+            Returns total number of available audio samples as ulong value.
+            </summary>
+            <returns>Total samples number (ulong)</returns>
+        </member>
+        <member name="M:SMOLS2000.OpenFile.getNumberOfChannels">
+            <summary>
+            Returns total number of available audio channels.
+            </summary>
+            <returns>Audio channels number</returns>
+        </member>
+        <member name="T:SMOLS2000.Properties.Resources">
+            <summary>
+              Silnie typizowana klasa zasobów do wyszukiwania zlokalizowanych ciągów itd.
+            </summary>
+        </member>
+        <member name="P:SMOLS2000.Properties.Resources.ResourceManager">
+            <summary>
+              Zwraca buforowane wystąpienie składnika ResourceManager używane przez tę klasę.
+            </summary>
+        </member>
+        <member name="P:SMOLS2000.Properties.Resources.Culture">
+            <summary>
+              Przesłania właściwość CurrentUICulture bieżącego wątku dla wszystkich
+              przypadków przeszukiwania zasobów za pomocą tej silnie typizowanej klasy zasobów.
+            </summary>
+        </member>
+        <member name="T:SMOLS2000.SaveFile">
+            <summary>
+            Class containing objects responsible for AV files saving.
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.SaveFile.#ctor(SMOLS2000.OpenFile)">
+            <summary>
+            Constructor created as a beginning for saving file sequence. Constructor opens new user dialog for saving file and saves new file path as an internal property.
+            </summary>
+            <param name="openFile">Current instance of openFile class; Thanks to this one can read all required properties</param>
+        </member>
+        <member name="M:SMOLS2000.SaveFile.saveSingleSample(System.Int16,System.Int16)">
+            <summary>
+            Method used for saving every single output sample (one-way data flow).
+            </summary>
+            <param name="value">Value of a sample (signed 16-bit short)</param>
+            <param name="channel">Select channel number; Avoid selecting non-existing channel</param>
+        </member>
+        <member name="M:SMOLS2000.SaveFile.saveAudioChunk">
+            <summary>
+            Internal method saves given group of samples (if there are enough samples available).
+            They may be saved into RAM memory or step-by-step to the file (depends on selected file format).
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.SaveFile.saveWavChunk(System.Collections.Generic.List{System.Byte},System.Int16)">
+            <summary>
+            Internal method for saving one WAV file chunk.
+            </summary>
+            <param name="samplesStream">1D bytes list containing linearised local samples buffer (all channels)</param>
+            <param name="channels">Number of channels to save in WAV file</param>
+        </member>
+        <member name="M:SMOLS2000.SaveFile.saveMp3Chunk(System.Collections.Generic.List{System.Byte},System.Int16)">
+            <summary>
+            Internal method for saving one mp3 file chunk.
+            </summary>
+            <param name="samplesStream">1D bytes list containing linearised local samples buffer (all channels)</param>
+            <param name="channels">Number of channels to save in mp3 file</param>
+        </member>
+        <member name="M:SMOLS2000.SaveFile.Close">
+            <summary>
+            Release resources, close saved files.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -10,6 +10,18 @@
 *.userosscache
 *.sln.docstates
 
+
+# TEMP files exclude (docs incomplete)
+log.txt
+ClassDiagram.png
+ClassDiagram.cd
+index.md
+articles/
+api/
+_site/
+toc.yml
+
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

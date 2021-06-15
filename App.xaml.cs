@@ -9,7 +9,7 @@ using System.Windows;
 namespace SMOLS2000
 {
     /// <summary>
-    /// Logika interakcji dla klasy App.xaml
+    /// Interaction logic for the App.xaml class.
     /// </summary>
     public partial class App : Application
     {

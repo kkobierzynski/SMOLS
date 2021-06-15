@@ -12,9 +12,11 @@ using System.Windows;
 
 namespace SMOLS2000
 {
-    class OpenFile
+    /// <summary>
+    /// Class contains objects representing 1 open audio file.
+    /// </summary>
+    public class OpenFile
     {
-
         private string _filePath = "";
         private string _fileName = "";
         private double _totalTimeMiliseconds = 0;
@@ -30,14 +32,18 @@ namespace SMOLS2000
         private const short _bufferSizeSeconds = 20;            //time of buffered samples in seconds
 
 
-        //TEMP CODE BEGIN
-        List<short> outputSamples = new List<short>();
-        //TEMP CODE END
 
-
-
+        /// <summary>
+        /// Constructor for initializing opening file sequence (with "Open" button).
+        /// </summary>
+        /// <param name="mainWindow">Current instance of mainWindow class</param>
         public OpenFile(MainWindow mainWindow) : this(mainWindow, null) { }
 
+        /// <summary>
+        /// Constructor for initializing opening file sequence (using drag/drop function, providing file path).
+        /// </summary>
+        /// <param name="mainWindow">Current instance of mainWindow class</param>
+        /// <param name="filePath">Complete path to the AV file (passed as a string)</param>
         public OpenFile(MainWindow mainWindow, string filePath)
         {
             if (filePath == null)
@@ -130,6 +136,12 @@ namespace SMOLS2000
 
         }
 
+        /// <summary>
+        /// Method returns one sample (signed short) at a given number and channel.
+        /// </summary>
+        /// <param name="sampleNumber">Number of sample that has to be returned (starting with 0)</param>
+        /// <param name="channel">Channel number (starting with 0)</param>
+        /// <returns>1 short value, representing sample value (signed 16-bit short)</returns>
         public short getSampleValue(long sampleNumber, short channel)
         {
             if ((ulong)sampleNumber < _totalSamplesNumber)
@@ -193,6 +205,12 @@ namespace SMOLS2000
             return 0;
         }
 
+        /// <summary>
+        /// Asynchronous task aimed to read a certain chunk of open file.
+        /// </summary>
+        /// <param name="secondStart">Starting second of extracted chunk</param>
+        /// <param name="secondEnd">Ending second of extracted chunk</param>
+        /// <returns>Memory chunk containing retrieved samples</returns>
         private async Task<MemoryStream> readAudioChunk(long secondStart, long secondEnd)
         {
             
@@ -209,6 +227,9 @@ namespace SMOLS2000
             return memoryStream;
         }
 
+        /// <summary>
+        /// Method updating open AV file parameters (noise power, signal power, etc.).
+        /// </summary>
         private void audioFileAnalysis()
         {
             //perform analysis only for files longer than 12 seconds; otherwise use default values
@@ -350,6 +371,10 @@ namespace SMOLS2000
             }
         }
 
+        /// <summary>
+        /// Method returns total time of open AV file as a string.
+        /// </summary>
+        /// <returns>String containing total AV play time</returns>
         public string getPlayTime()
         {
             int hours = (int)(_totalTimeMiliseconds / 3600000);
@@ -389,66 +414,61 @@ namespace SMOLS2000
 
             return hoursString + ":" + minutesString + ":" + secondsString;
         }
+
+        /// <summary>
+        /// Returns calculated normalised signal level.
+        /// </summary>
+        /// <returns>Normalised signal level (double min=0, max=1)</returns>
         public double getSignalLevel()
         {
             return _normalisedSignalLevel;
         }
 
+        /// <summary>
+        /// Returns calculated normalised noise level.
+        /// </summary>
+        /// <returns>Normalised noise level (double min=0, max=1)</returns>
         public double getNoiseLevel()
         {
             return _normalisedNoiseLevel;
         }
 
+        /// <summary>
+        /// Returns file name string (name, not full path).
+        /// </summary>
+        /// <returns>Name file string</returns>
         public string getFileName()
         {
             return _fileName;
         }
 
+        /// <summary>
+        /// Returns sample rate as an integer in Hz.
+        /// </summary>
+        /// <returns>Sample rate in Hz</returns>
         public int getSampleRate()
         {
             return _sampleRate;
         }
 
+        /// <summary>
+        /// Returns total number of available audio samples as ulong value.
+        /// </summary>
+        /// <returns>Total samples number (ulong)</returns>
         public ulong getTotalSamplesNumber()
         {
             return _totalSamplesNumber;
         }
 
+        /// <summary>
+        /// Returns total number of available audio channels.
+        /// </summary>
+        /// <returns>Audio channels number</returns>
         public short getNumberOfChannels()
         {
             return _numberOfChannels;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-        //TEMP CODE BEGIN
-        public void saveSampleValue(short sample)
-        {
-            outputSamples.Add(sample);
-        }
-
-        public void saveFile()
-        {
-            StreamWriter streamFile = new StreamWriter("aaa.txt");
-
-            for (int i = 0; i < outputSamples.Count(); i++)
-            {
-                streamFile.WriteLine(outputSamples[i]);
-            }
-            streamFile.Close();
-
-        }
-
-        //TEMP CODE END
 
     }
 }
