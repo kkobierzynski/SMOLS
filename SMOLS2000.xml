@@ -22,6 +22,17 @@
             Application Entry Point.
             </summary>
         </member>
+        <member name="T:SMOLS2000.DrawWaveform">
+            <summary>
+            A prototype of the class allowing to draw a waveform basing on the table of samples.
+            </summary>
+        </member>
+        <member name="M:SMOLS2000.DrawWaveform.#ctor(SMOLS2000.MainWindow)">
+            <summary>
+            Method draws a test waveform in accordance with the class description.
+            </summary>
+            <param name="mainWindow">Current instance of mainWindow class</param>
+        </member>
         <member name="T:SMOLS2000.MainWindow">
             <summary>
             Interaction logic for the MainWindow.xaml class.

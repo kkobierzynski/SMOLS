@@ -21,7 +21,7 @@ namespace SMOLS2000
     /// <summary>
     /// A prototype of the class allowing to draw a waveform basing on the table of samples.
     /// </summary>
-    class DrawWaveform
+    public class DrawWaveform
     {
         private static WriteableBitmap writeableBitmap;
 

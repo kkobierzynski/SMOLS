@@ -8,7 +8,7 @@ using System.Data;
 
 namespace SMOLS2000
 {
-    class CutSilence
+    public class CutSilence
     {
         private int buffer_counter = 0;
         private int release_counter = 0;
