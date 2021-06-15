@@ -132,7 +132,10 @@ namespace SMOLS2000
             }
             else
             {
-                localChannelsToBeSaved = 2;
+                if(_openFile.getNumberOfChannels() == 1)
+                    localChannelsToBeSaved = 1;
+                else
+                    localChannelsToBeSaved = 2;
             }
 
 
