@@ -17,8 +17,8 @@ namespace SMOLS2000
     /// </summary>
     public class OpenFile
     {
-        private string _filePath = "";
-        private string _fileName = "";
+        private string _filePath = "";                          //variable contains a complete file path
+        private string _fileName = "";                          //variable contains a file name (with extension)
         private double _totalTimeMiliseconds = 0;
         private int _sampleRate = 0;
         private short _numberOfChannels = 0;
